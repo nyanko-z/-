@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no"> 
+  <link rel="stylesheet" href="styles/style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+  <title>サボテン避けないと刺さるよ</title>
+  <style>
+  body{
+    height: 50%;
+    overflow: hidden;
+  }
+  .scorefont{
+  font-family: "DotGothic16", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+  #sabaku{
+    background-image: url("sabaku.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 200px;
+    width: 385px;
+    transform: translateX(-8px);
+  }
+  #startbtn{
+    height: 50px;
+    width: 100px;
+    font-size: 30px;
+    margin-top: 100px;
+    margin-left: 125px;
+    position: fixed;
+    bottom: 130px;
+  }
+  #sabo{
+    display: none;
+    height: 20px;
+    width: 20px;
+    position: fixed;
+    top: 188px;
+  }
+  #player{
+    display: none;
+    height: auto;
+    width: 30px;
+    transform: translateY(0);
+    margin-left: 50px;
+    position: fixed;
+    top: 178px;
+  }
+  #jump{
+    display: none;
+    height: 100px;
+    width: 90%;
+    font-size: 50px;
+    margin-top: 100px;
+    z-index: 3;
+    background-color: #FF3F00;
+    color: white;
+    position: fixed;
+    bottom: 110px;
+    left: 15px;
+    right: 15px;
+    border-radius: 20px;
+  }
+  #jump:active{
+    background-color: #9C2700;
+    transform: scale(0.9);
+    transition: background-color 0.3s,transform 0.3s;
+  }
+  #yohaku{
+    height: 200px;
+    width: auto;
+    z-index: -998;
+  }
+  #zimen{
+    height: 100px;
+    width: 104.7%;
+    background-color: #FFD800;
+    transform: translateX(-8px);
+  }
+  #score{
+    display: none;
+    transform: translateY(-110px);
+    color: white;
+    font-size: 20px;
+  }
+  .finishscore{
+    text-align: center;
+    color: red;
+    font-size: 50px;
+    margin-top: 50%;
+  }
+  .finish{
+    display: none;
+    color: red;
+    font-size: 70px;
+    text-align: center;
+    margin-top: 
+  }
+  #finishwindow{
+    background-color: rgba(128,128,128,0.6);
+    height: 100%;
+    width: 370px;
+    position: fixed;
+    display: none;
+    transform: translateY(-60px);
+    z-index: 1000;
+  }
+  #make{
+    display: none;
+    background-image: url("makeplayer.png");
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: -15px;
+  }
+  #bestscoremessege{
+    color: red;
+    font-size: 20px;
+  }
+  #jumpsabo{
+    display: none;
+    transform: translateY(-140px);
+    color: white;
+    font-size: 20px;
+  }
+  #hihiscore{
+    display: none;
+    transform: translateY(-125px);
+    color: white;
+    font-size: 20px;
+  }
+  </style>
+</head>
+<body>
+  <audio id="startbgm" src="startmusic.mp3"></audio>
+  <audio id="jumpbgm" src="jump.wav"></audio>
+  <audio id="bgm" src="bgm.m4a"></audio>
+  <audio id="gsa" src="gsa.mp3"></audio>
+  <audio id="makebgm" src="make.mp3"></audio>
+  <audio id="lv" src="Lv.up.mp3"></audio>
+  <div id="sabaku"></div> 
+  <img id="sabo" src="sabo.png">
+  <img id="player" src="player.gif">
+  <div id="zimen"></div>
+  <button id="startbtn">start</button>
+  <h2 id="best"></h2>
+  <h1 id="score" class="scorefont">score:0</h1>
+  <h1 id="hihiscore" class="scorefont"></h1>
+  <h1 id="jumpsabo" class="scorefont">jump:0</h1>
+  <button id="jump">jump!!</button>
+  <div id="make"></div>
+  <div id="finishwindow"><h1 id="finish" class="finish">グサッ</h1>
+  <h2 id="finishscore" class="finishscore"></h2></div>
+  <script>
+  //localStorage.setItem("hiscore",0);
+  const hiscore=localStorage.getItem("hiscore");
+  document.getElementById("best").innerHTML=`最高記録:${hiscore}スコア`;
+  document.getElementById("startbtn").addEventListener('click',()=>{
+    const startbgm=document.getElementById("startbgm");
+    startbgm.currentTime=0;
+    startbgm.play();
+    const bgm=document.getElementById("bgm");
+    bgm.currentTime=0;
+    bgm.play();
+    if(bgm.currentTime==260){
+      bgm.currentTime=0;
+    }
+    document.getElementById("best").style.display="none";
+    document.getElementById("score").style.display="block";
+    document.getElementById("hihiscore").style.display="block";
+    document.getElementById("jumpsabo").style.display="block";
+    document.getElementById("startbtn").style.display='none';
+    document.getElementById("player").style.display="block";
+    document.getElementById("jump").style.display='block';
+    
+    document.getElementById("hihiscore").innerHTML=`hiscore:${hiscore}`;
+    let score=0;
+    let spup=1;
+    let jumpsabo=0;
+       let startiti=390;
+    setInterval(()=>{
+          spup+=0.1;
+          const lv=document.getElementById("lv");
+          lv.current=0;
+          lv.volume=1.0;
+          lv.play();
+    },5000);
+       document.getElementById("sabo").style.transform=`translateX(${startiti}px)`;
+    document.getElementById("sabo").style.display="block";
+    setInterval(()=>{
+          function onserch(img1,img2){
+      return (img1.bottom>img2.top&&img1.right>img2.left&&img1.left<img2.right);
+    }
+    const player=document.getElementById("player").getBoundingClientRect();
+    const sabo=document.getElementById("sabo").getBoundingClientRect();
+    
+    if(onserch(player,sabo)){
+      bgm.pause();
+      const gsa=document.getElementById("gsa");
+      const makebgm=document.getElementById("makebgm");
+      gsa.current=0;
+      gsa.play();
+      setTimeout(()=>{
+        makebgm.currentTime=0;
+        makebgm.play();
+      },1000);
+      document.getElementById("jump").style.display="none";
+      document.getElementById("zimen").style.display="none";
+      document.getElementById("sabaku").style.display="none";
+      document.getElementById("player").style.display="none";
+      document.getElementById("sabo").style.display="none";
+      document.getElementById("score").style.display="none";
+      document.getElementById("jumpsabo").style.display="none";
+      document.getElementById("make").style.display="block";
+      document.getElementById("finishwindow").style.display="block";
+      document.getElementById("finish").style.display="block";
+      document.getElementById("finishscore").innerHTML=`${score}スコア`;
+      if(localStorage.getItem("hiscore")===null||localStorage.getItem("hiscore")<score){
+        localStorage.setItem("hiscore",score);
+      };
+      setTimeout(()=>{
+        location.reload()},4000);
+    };
+      startiti-=spup;
+      document.getElementById("sabo").style.transform=`translateX(${startiti}px)`;
+      let sabostop=document.getElementById("sabo").getBoundingClientRect();
+      if(sabostop.right<=0){
+        startiti=410;
+        score*=1.01;
+        score+=100;
+        let score2=Math.floor(score);
+        score=score2;
+        document.getElementById("score").innerHTML=`score:${score}`;
+        jumpsabo+=1;
+        document.getElementById("jumpsabo").innerHTML=`jump:${jumpsabo}`
+      };
+    },5);
+  });
+  document.getElementById("jump").addEventListener("click",()=>{
+    const jumpbgm=document.getElementById("jumpbgm");
+    jumpbgm.currentTime=0;
+    jumpbgm.play();
+    let j=0;
+   const jump=setInterval(()=>{
+      j+=3;
+     document.getElementById("player").style.transform=`translateY(-${j}px)`;
+      if(j==90){
+        clearInterval(jump);
+   const down=setInterval(()=>{
+          j-=5;
+          document.getElementById("player").style.transform=`translateY(-${j}px)`;
+          if(j==0){
+            clearInterval(down);
+          }},10);
+      }},10);
+    });
+  </script>
+</body>
+</html>
